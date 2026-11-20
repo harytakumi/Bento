@@ -36,6 +36,104 @@ const EMPTY_SLOTS: Record<BentoSlotKey, FoodItem | null> = {
   minuman_camilan: null,
 };
 
+function CutePlateQuestionSvg({ isActive }: { isActive: boolean }) {
+  return (
+    <svg
+      width="84"
+      height="84"
+      viewBox="0 0 96 96"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      className="select-none"
+    >
+      {/* Bayangan lembut piring */}
+      <ellipse cx="48" cy="80" rx="30" ry="5" fill="#FDE68A" opacity="0.65" />
+      {/* Piring luar */}
+      <circle
+        cx="48"
+        cy="48"
+        r="36"
+        fill="#FFFFFF"
+        stroke={isActive ? '#F97316' : '#CBD5E1'}
+        strokeWidth="4"
+      />
+      {/* Lingkaran dalam piring */}
+      <circle
+        cx="48"
+        cy="48"
+        r="25"
+        fill="#FFFBEB"
+        stroke={isActive ? '#FDBA74' : '#E2E8F0'}
+        strokeWidth="2.5"
+        strokeDasharray="5 4"
+      />
+      {/* Tanda tanya lucu dengan mata kecil */}
+      <path
+        d="M40 38 C40 31.5, 44.5 28, 49 28 C54 28, 57.5 31.5, 57.5 36 C57.5 40.5, 53 42.5, 50 45 C48.5 46.2, 48 48, 48 50.5"
+        stroke="#F97316"
+        strokeWidth="5.5"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <circle cx="48" cy="60.5" r="3.6" fill="#F97316" />
+      {/* Bintang kilau kecil */}
+      <circle cx="29" cy="30" r="2.2" fill="#FBBF24" />
+      <circle cx="68" cy="65" r="2" fill="#FBBF24" />
+    </svg>
+  );
+}
+
+function CuteGlassQuestionSvg({ isActive }: { isActive: boolean }) {
+  return (
+    <svg
+      width="84"
+      height="84"
+      viewBox="0 0 96 96"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      className="select-none"
+    >
+      {/* Bayangan lembut gelas */}
+      <ellipse cx="48" cy="83" rx="22" ry="4.5" fill="#BAE6FD" opacity="0.7" />
+      {/* Sedotan lucu */}
+      <path
+        d="M57 32 L63 14 L73 12"
+        stroke="#FB7185"
+        strokeWidth="4.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Badan gelas */}
+      <path
+        d="M29 30 H67 L61 75 C60.5 78.5, 57.5 80, 54 80 H42 C38.5 80, 35.5 78.5, 35 75 Z"
+        fill="#FFFFFF"
+        stroke={isActive ? '#F97316' : '#CBD5E1'}
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* Isi minuman pastel di dalam gelas */}
+      <path
+        d="M33 44 H63 L59 73 C58.7 75, 57 76, 54.5 76 H41.5 C39 76, 37.3 75, 37 73 Z"
+        fill="#E0F2FE"
+      />
+      {/* Tanda tanya lucu */}
+      <path
+        d="M42.5 47 C42.5 42.5, 45.5 40, 48.5 40 C52 40, 54.5 42.5, 54.5 45.5 C54.5 48.5, 51.5 50, 49.5 52 C48.5 53, 48 54, 48 56"
+        stroke="#0284C7"
+        strokeWidth="4.8"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <circle cx="48" cy="64" r="3.2" fill="#0284C7" />
+      {/* Gelembung kecil lucu */}
+      <circle cx="38" cy="52" r="2" fill="#7DD3FC" />
+      <circle cx="59" cy="58" r="2.2" fill="#7DD3FC" />
+    </svg>
+  );
+}
+
 export function RakitBentoGame({
   isSpeaking,
   onCompleteSession,
@@ -184,6 +282,13 @@ export function RakitBentoGame({
               <button
                 key={slotKey}
                 type="button"
+                aria-label={
+                  item
+                    ? `${meta.shortLabel}: ${item.name}`
+                    : slotKey === 'minuman_camilan'
+                      ? 'Gelas kosong, ketuk untuk memilih minuman'
+                      : 'Piring kosong, ketuk untuk memilih makanan'
+                }
                 onClick={() => handleSelectSlot(slotKey)}
                 className={`min-h-[136px] rounded-3xl border-3 p-3 flex flex-col items-center justify-center gap-1.5 transition-transform duration-150 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300 ${
                   isSelected
@@ -193,9 +298,6 @@ export function RakitBentoGame({
                       : 'bg-slate-50 border-dashed border-slate-300 hover:bg-slate-100'
                 }`}
               >
-                <span className="text-xs sm:text-sm font-bold text-slate-600">
-                  {meta.shortLabel}
-                </span>
                 {item ? (
                   <>
                     <span className="text-5xl sm:text-6xl select-none animate-pop" aria-hidden="true">
@@ -205,15 +307,10 @@ export function RakitBentoGame({
                       {item.name}
                     </span>
                   </>
+                ) : slotKey === 'minuman_camilan' ? (
+                  <CuteGlassQuestionSvg isActive={isSelected} />
                 ) : (
-                  <>
-                    <span className="text-4xl opacity-40 select-none" aria-hidden="true">
-                      {meta.emoji}
-                    </span>
-                    <span className="text-sm font-semibold text-slate-500">
-                      Ketuk isi
-                    </span>
-                  </>
+                  <CutePlateQuestionSvg isActive={isSelected} />
                 )}
               </button>
             );
@@ -298,7 +395,9 @@ export function RakitBentoGame({
         <section aria-label="Pilihan makanan" className="bg-white border-2 border-amber-200 rounded-3xl p-4 sm:p-5">
           <div className="flex items-center justify-between gap-2 mb-3">
             <h3 className="font-display text-xl font-bold text-slate-900">
-              Pilih untuk Sekat {BENTO_SLOT_META[activeSlot].shortLabel}:
+              {activeSlot === 'minuman_camilan'
+                ? 'Pilih Minuman untuk Gelas Ini:'
+                : 'Pilih Makanan untuk Piring Ini:'}
             </h3>
           </div>
 
